@@ -1,31 +1,33 @@
 import axios from "axios";
 
-//GET - get all products - /products
-//GET - get product by ud - /products/:id
-//POST - create product - /products - Content Type - "application/json"
-//GET - get dashboard data - /dashboard
+// Define your base URL
+const baseURL = "https://api.example.com";
 
-const envBaseUrl = "https://frontend-assessment-server.onrender.com/api";
-
+// Create an axios instance with the base URL
 const instance = axios.create({
-  baseURL: envBaseUrl,
+  baseURL: baseURL,
+  timeout: 10000, // Timeout after 10 seconds
 });
 
-export const getRequest = async (url, params = {}, responseType = "json") => {
-  return instance.get(url, {
-    params,
-    responseType,
-  });
+// Export functions for making GET and POST requests
+export const getRequest = async (url, params = {}) => {
+  try {
+    const response = await instance.get(url, { params });
+    return response.data;
+  } catch (error) {
+    // Handle errors here
+    console.error("Error fetching data:", error);
+    throw error;
+  }
 };
 
-export const postRequest = async (url, data, options) => {
-  if (options && options.contentType) {
-    instance.defaults.headers["Content-Type"] =
-      options.contentType === "multipart/form-data"
-        ? undefined
-        : options.contentType;
+export const postRequest = async (url, data = {}) => {
+  try {
+    const response = await instance.post(url, data);
+    return response.data;
+  } catch (error) {
+    // Handle errors here
+    console.error("Error posting data:", error);
+    throw error;
   }
-  const response = await instance.post(url, data);
-  instance.defaults.headers["Content-Type"] = "application/json";
-  return response;
 };
